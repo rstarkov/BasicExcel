@@ -30,7 +30,7 @@ public class XlSheetWriter
             EndRow();
     }
 
-    public void StartRow(int row, XlStyle? rowStyle = null)
+    public void StartRow(int row, XlStyle? rowStyle = null, double? height = null)
     {
         if (_rowStarted)
             EndRow();
@@ -40,16 +40,18 @@ public class XlSheetWriter
             _stream.WriteLine($"    <row></row>");
             Row++;
         }
-        StartRow(rowStyle);
+        StartRow(rowStyle, height);
     }
 
-    public void StartRow(XlStyle? rowStyle = null)
+    public void StartRow(XlStyle? rowStyle = null, double? height = null)
     {
         if (_rowStarted)
             EndRow();
         _rowStarted = true;
         _rowStyle = new XlStyle().Inherit(rowStyle).Inherit(_parentStyle);
         _stream.Write($"    <row");
+        if (height != null)
+            _stream.Write($" ht=\"{height}\" customHeight=\"1\"");
         int styleId = _xlWriter.MapStyle(_rowStyle);
         if (styleId != 0)
             _stream.Write($" s=\"{styleId}\" customFormat=\"1\"");
@@ -71,18 +73,21 @@ public class XlSheetWriter
     public void AddCell(double value, XlStyle? style = null) => addCell(value.ToString(), null, style);
     public void AddCell(decimal value, XlStyle? style = null) => addCell(value.ToString(), null, style);
     public void AddCell(bool value, XlStyle? style = null) => addCell(value ? "1" : "0", "b", style);
+    public void AddCell(DateTime value, XlStyle? style = null) => addCell((value - new DateTime(1899, 12, 30)).TotalDays.ToString(), null, style); // 1 day off before Feb 1900, don't care
 
     public void AddCell(int col, string value, XlStyle? style = null) { moveTo(col); addCell(value, "str", style); }
     public void AddCell(int col, int value, XlStyle? style = null) { moveTo(col); addCell(value.ToString(), null, style); }
     public void AddCell(int col, double value, XlStyle? style = null) { moveTo(col); addCell(value.ToString(), null, style); }
     public void AddCell(int col, decimal value, XlStyle? style = null) { moveTo(col); addCell(value.ToString(), null, style); }
     public void AddCell(int col, bool value, XlStyle? style = null) { moveTo(col); addCell(value ? "1" : "0", "b", style); }
+    public void AddCell(int col, DateTime value, XlStyle? style = null) { moveTo(col); AddCell(value, style); }
 
     public void AddCell(int row, int col, string value, XlStyle? style = null) { moveTo(row, col); addCell(value, "str", style); }
     public void AddCell(int row, int col, int value, XlStyle? style = null) { moveTo(row, col); addCell(value.ToString(), null, style); }
     public void AddCell(int row, int col, double value, XlStyle? style = null) { moveTo(row, col); addCell(value.ToString(), null, style); }
     public void AddCell(int row, int col, decimal value, XlStyle? style = null) { moveTo(row, col); addCell(value.ToString(), null, style); }
     public void AddCell(int row, int col, bool value, XlStyle? style = null) { moveTo(row, col); addCell(value ? "1" : "0", "b", style); }
+    public void AddCell(int row, int col, DateTime value, XlStyle? style = null) { moveTo(row, col); AddCell(value, style); }
 
     private void addCell(string rawvalue, string? type, XlStyle? style)
     {

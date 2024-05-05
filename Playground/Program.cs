@@ -53,6 +53,32 @@ internal class Program
             sw.AddCell(5, "foo", new XlStyle().Mod().Align(XlHorz.Right).BorderLR(XlBorder.Dash, "FF8080").BorderT(XlBorder.Double).BorderB(XlBorder.Thin));
         };
         wb3.Save("styles.xlsx");
+
+        var start = DateTime.UtcNow;
+        var wb4 = new XlWorkbook();
+        wb4.Sheets.Add(new XlSheet());
+        wb4.Sheets[0].Columns[1].Width = 11;
+        wb4.Sheets[0].Columns[1].Style.Mod().Fmt(XlFmt.LocalDate);
+        wb4.Sheets[0].Columns[2].Width = 30;
+        wb4.Sheets[0].Columns[2].Style.Mod().Align(XlHorz.Center);
+        wb4.Sheets[0].Columns[3].Width = 12;
+        wb4.Sheets[0].Columns[3].Style.Mod().Fmt(XlFmt.AccountingGbp);
+        wb4.Sheets[0].WriteSheet = sw =>
+        {
+            sw.StartRow(new XlStyle().Mod().Color("FFFFFF", "008800").BorderB(XlBorder.Medium).Align(XlVert.Center), height: 32);
+            sw.AddCell("Date");
+            sw.AddCell("Centered");
+            sw.AddCell("Total");
+            for (int i = 0; i < 20; i++)
+            {
+                sw.StartRow();
+                sw.AddCell(DateTime.Today.AddDays(-i));
+                sw.AddCell("Foobar");
+                sw.AddCell(Random.Shared.Next(0, 2000_00) / 10m);
+            }
+        };
+        wb4.Save("formats.xlsx");
+        Console.WriteLine($"{(DateTime.UtcNow - start).TotalMilliseconds:0}ms"); // 30k cells = 165ms
     }
 
     static void ReformatFile(string inputPath, string outputPath)
