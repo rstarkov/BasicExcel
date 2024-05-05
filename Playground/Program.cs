@@ -46,6 +46,7 @@ internal class Program
             sw.StartRow(4, new XlStyle().Mod().Fill("FFDD22").Font(bold: true).Align(XlHorz.Center));
             sw.AddCell("foo");
             sw.AddCell("foobar");
+            sw.AddCell(6, "bar");
             sw.AddCell(6, 1, "foo", new XlStyle().Mod().Align(XlVert.Center));
             sw.AddCell("foobar", new XlStyle().Mod().Font(20));
             sw.AddCell("foobar абвгд", new XlStyle().Mod().Font("Segoe UI", italic: true));

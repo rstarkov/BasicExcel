@@ -108,7 +108,12 @@ public class XlSheetWriter
         if (Col > col) throw new Exception("Can't move to a column out of order");
         while (Col < col)
         {
-            _stream.Write("<c></c>");
+            var colStyle = _sheet.Columns.TryGetValue(Col, out var c) ? c.Style : null;
+            int styleId = _xlWriter.MapStyle(new XlStyle().Inherit(colStyle).Inherit(_rowStyle));
+            if (styleId != 0)
+                _stream.Write($"<c s=\"{styleId}\"></c>");
+            else
+                _stream.Write("<c></c>");
             Col++;
         }
     }
