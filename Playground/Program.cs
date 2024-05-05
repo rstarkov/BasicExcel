@@ -35,6 +35,22 @@ internal class Program
             sw.AddCell(7, 4, "Row 7 Col 4");
         };
         wb2.Save("basic.xlsx");
+
+        var wb3 = new XlWorkbook();
+        wb3.Sheets.Add(new XlSheet());
+        wb3.Sheets[0].Columns[2].Style.Mod().Color("EEEEEE", "228811");
+        wb3.Sheets[0].WriteSheet = sw =>
+        {
+            sw.AddCell(2, 5, "Row 2 Col 5", new XlStyle().Mod().Color("AA4422"));
+            sw.StartRow(4, new XlStyle().Mod().Fill("FFDD22").Font(bold: true).Align(XlHorz.Center));
+            sw.AddCell("foo");
+            sw.AddCell("foobar");
+            sw.AddCell(6, 1, "foo", new XlStyle().Mod().Align(XlVert.Center));
+            sw.AddCell("foobar", new XlStyle().Mod().Font(20));
+            sw.AddCell("foobar абвгд", new XlStyle().Mod().Font("Segoe UI", italic: true));
+            sw.AddCell(5, "foo", new XlStyle().Mod().Align(XlHorz.Right));
+        };
+        wb3.Save("styles.xlsx");
     }
 
     static void ReformatFile(string inputPath, string outputPath)

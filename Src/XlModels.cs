@@ -53,7 +53,7 @@ public class XlSheet
 {
     /// <summary>Name of the sheet. Automatically deduplicated if necessary. Defaults to "Sheet".</summary>
     public string Name { get; set; } = "Sheet";
-    public AutoDictionary<int, XlColumn> Columns { get; } = [];
+    public AutoDictionary<int, XlColumn> Columns { get; } = new(_ => new());
     /// <summary>Cell reference to the first unfrozen cell, e.g. "A2" for top row only, or null for no freeze.</summary>
     public string? Freeze { get; set; } = null;
     /// <summary>Default style for all cells in the sheet, unless overridden. Merged with the workbook default style.</summary>
@@ -66,7 +66,7 @@ public class XlColumn
 {
     public double? Width { get; set; } = null;
     public bool BestFit { get; set; } = false;
-    public XlStyle? Style { get; set; } = null;
+    public XlStyle Style { get; set; } = new();
 }
 
 public record class XlStyle

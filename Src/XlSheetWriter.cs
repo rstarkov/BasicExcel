@@ -46,7 +46,7 @@ public class XlSheetWriter
         _stream.Write($"    <row");
         int styleId = _xlWriter.MapStyle(rowStyle, _sheet.Style);
         if (styleId != 0)
-            _stream.Write($" s=\"{styleId}\"");
+            _stream.Write($" s=\"{styleId}\" customFormat=\"1\"");
         _stream.Write(">");
     }
 
