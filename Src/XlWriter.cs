@@ -269,7 +269,7 @@ internal class XlWriter : IDisposable
             var index = _wb.Sheets.IndexOf(_wb.ActiveSheet);
             if (index < 0)
                 throw new InvalidOperationException("ActiveTab not found in Sheets");
-            activeTab = $" activeTab=\"{index + 1}\"";
+            activeTab = $" activeTab=\"{index}\"";
         }
         writeFile("xl/workbook.xml",
             $$"""
