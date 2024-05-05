@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Runtime.Serialization;
 
+#nullable disable
+
 namespace BasicExcel.Util;
 
 // from RT.Util.Core
@@ -89,7 +91,7 @@ public class AutoDictionary<TKey, TValue> : IDictionary<TKey, TValue>
     /// <summary>Equivalent to the same method in <see cref="Dictionary{TKey,TValue}"/>.</summary>
     public Dictionary<TKey, TValue>.Enumerator GetEnumerator() { return _inner.GetEnumerator(); }
     /// <summary>Equivalent to the same method in <see cref="Dictionary{TKey,TValue}"/>.</summary>
-    public virtual void GetObjectData(SerializationInfo info, StreamingContext context) { _inner.GetObjectData(info, context); }
+    public virtual void GetObjectData(SerializationInfo info, StreamingContext context) => throw new NotSupportedException();
     /// <summary>Equivalent to the same method in <see cref="Dictionary{TKey,TValue}"/>.</summary>
     public virtual void OnDeserialization(object sender) { _inner.OnDeserialization(sender); }
     /// <summary>Equivalent to the same method in <see cref="Dictionary{TKey,TValue}"/>.</summary>
