@@ -63,11 +63,16 @@ internal class XlWriter : IDisposable
             var viewXml = new XElement("sheetView", new XAttribute("workbookViewId", "0"));
             if (_wb.ActiveSheet == _wb.Sheets[si])
                 viewXml.Add(new XAttribute("tabSelected", "1"));
-            //if (_wb.Sheets[si].Freeze != null)
-            //{
-            //    var paneXml = new XElement("pane", ?);
-            //    viewXml.Add(paneXml);
-            //}
+            if (_wb.Sheets[si].FreezeRows != null || _wb.Sheets[si].FreezeCols != null)
+            {
+                var topleftCell = XlUtil.CellRef((_wb.Sheets[si].FreezeRows ?? 0) + 1, (_wb.Sheets[si].FreezeCols ?? 0) + 1);
+                XElement paneXml = new XElement("pane", new XAttribute("state", "frozen"), new XAttribute("topLeftCell", topleftCell));
+                if (_wb.Sheets[si].FreezeCols != null)
+                    paneXml.Add(new XAttribute("xSplit", _wb.Sheets[si].FreezeCols!.Value));
+                if (_wb.Sheets[si].FreezeRows != null)
+                    paneXml.Add(new XAttribute("ySplit", _wb.Sheets[si].FreezeRows!.Value));
+                viewXml.Add(paneXml);
+            }
             writer.Write("  ");
             writer.Write(new XElement("sheetViews", viewXml).ToString(SaveOptions.DisableFormatting));
             writer.WriteLine(

@@ -57,6 +57,7 @@ internal class Program
         var start = DateTime.UtcNow;
         var wb4 = new XlWorkbook();
         wb4.Sheets.Add(new XlSheet());
+        wb4.Sheets[0].FreezeRows = 1;
         wb4.Sheets[0].Columns[1].Width = 11;
         wb4.Sheets[0].Columns[1].Style.Mod().Fmt(XlFmt.LocaleDate);
         wb4.Sheets[0].Columns[2].Width = 30;
@@ -80,6 +81,11 @@ internal class Program
                 sw.AddCell(DateTime.Now.AddDays(-i));
             }
         };
+        wb4.Sheets.Add(new XlSheet { Name = "Freeze 1 col", FreezeCols = 1 });
+        wb4.Sheets.Add(new XlSheet { Name = "Freeze 2 rows", FreezeRows = 2 });
+        wb4.Sheets.Add(new XlSheet { Name = "Freeze 2 cols", FreezeCols = 2 });
+        wb4.Sheets.Add(new XlSheet { Name = "Freeze 1r1c", FreezeRows = 1, FreezeCols = 1 });
+        wb4.Sheets.Add(new XlSheet { Name = "Freeze 2r2c", FreezeRows = 2, FreezeCols = 2 });
         wb4.Save("formats.xlsx");
         Console.WriteLine($"{(DateTime.UtcNow - start).TotalMilliseconds:0}ms"); // 30k cells = 165ms
     }
