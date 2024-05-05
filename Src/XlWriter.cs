@@ -94,7 +94,7 @@ internal class XlWriter : IDisposable
             }
 
             writer.WriteLine("  <sheetData>");
-            var sw = new XlSheetWriter(this, fullSheetStyle, writer);
+            var sw = new XlSheetWriter(this, writer, _wb.Sheets[si], fullSheetStyle);
             _wb.Sheets[si].WriteSheet(sw);
             sw.Finalise();
 

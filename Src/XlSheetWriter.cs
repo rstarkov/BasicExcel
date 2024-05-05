@@ -5,17 +5,20 @@ namespace BasicExcel;
 public class XlSheetWriter
 {
     private XlWriter _xlWriter;
-    private XlStyle _parentStyle;
     private StreamWriter _stream;
+    private XlSheet _sheet;
+    private XlStyle _parentStyle;
     private bool _rowStarted = false;
-    private XlStyle? _rowStyle = null;
+    private XlStyle? _rowStyle; // full style with sheet+wb styling
 
     /// <param name="parentStyle">A merged sheet + workbook default style.</param>
-    internal XlSheetWriter(XlWriter writer, XlStyle parentStyle, StreamWriter stream)
+    internal XlSheetWriter(XlWriter writer, StreamWriter stream, XlSheet sheet, XlStyle parentStyle)
     {
         _xlWriter = writer;
-        _parentStyle = parentStyle;
         _stream = stream;
+        _sheet = sheet;
+        _parentStyle = parentStyle;
+        _rowStyle = _parentStyle;
     }
 
     public int Row { get; private set; } = 1;
@@ -45,9 +48,9 @@ public class XlSheetWriter
         if (_rowStarted)
             EndRow();
         _rowStarted = true;
-        _rowStyle = rowStyle;
+        _rowStyle = new XlStyle().Inherit(rowStyle).Inherit(_parentStyle);
         _stream.Write($"    <row");
-        int styleId = _xlWriter.MapStyle(new XlStyle().Inherit(rowStyle).Inherit(_parentStyle));
+        int styleId = _xlWriter.MapStyle(_rowStyle);
         if (styleId != 0)
             _stream.Write($" s=\"{styleId}\" customFormat=\"1\"");
         _stream.Write(">");
@@ -58,7 +61,7 @@ public class XlSheetWriter
         if (!_rowStarted) throw new Exception();
         _stream.WriteLine("</row>");
         _rowStarted = false;
-        _rowStyle = null;
+        _rowStyle = _parentStyle;
         Row++;
         Col = 1;
     }
@@ -88,7 +91,8 @@ public class XlSheetWriter
         _stream.Write("<c");
         if (type != null)
             _stream.Write($" t=\"{type}\"");
-        int styleId = _xlWriter.MapStyle(new XlStyle().Inherit(style).Inherit(_rowStyle).Inherit(_parentStyle));
+        var colStyle = _sheet.Columns.TryGetValue(Col, out var c) ? c.Style : null;
+        int styleId = _xlWriter.MapStyle(new XlStyle().Inherit(style).Inherit(colStyle).Inherit(_rowStyle));
         if (styleId != 0)
             _stream.Write($" s=\"{styleId}\"");
         _stream.Write("><v>");
