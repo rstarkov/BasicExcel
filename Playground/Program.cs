@@ -39,6 +39,7 @@ internal class Program
         var wb3 = new XlWorkbook();
         wb3.Sheets.Add(new XlSheet());
         wb3.Sheets[0].Columns[2].Style.Mod().Color("EEEEEE", "228811");
+        wb3.Sheets[0].Columns[3].Width = 20;
         wb3.Sheets[0].WriteSheet = sw =>
         {
             sw.AddCell(2, 5, "Row 2 Col 5", new XlStyle().Mod().Color("AA4422"));

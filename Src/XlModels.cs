@@ -65,7 +65,6 @@ public class XlSheet
 public class XlColumn
 {
     public double? Width { get; set; } = null;
-    public bool BestFit { get; set; } = false;
     public XlStyle Style { get; set; } = new();
 }
 
