@@ -76,6 +76,7 @@ internal class XlWriter : IDisposable
                   <sheetFormatPr defaultRowHeight="14.5" x14ac:dyDescent="0.35" />
                 """);
 
+            var fullSheetStyle = new XlStyle().Inherit(_wb.Sheets[si].Style).Inherit(_wb.Style);
             if (_wb.Sheets[si].Columns.Count > 0)
             {
                 writer.WriteLine("  <cols>");
@@ -84,7 +85,7 @@ internal class XlWriter : IDisposable
                     writer.Write($"    <col min=\"{kvp.Key}\" max=\"{kvp.Key}\" width=\"{kvp.Value.Width ?? 8.7265625:0.###}\"");
                     if (kvp.Value.Width != null) // width is mandatory; without it the style has no effect. "bestFit" doesn't auto-size on load so not supported here.
                         writer.Write(" customWidth=\"1\""); // "customWidth" doesn't seem to do anything but write it out to match what Excel does just in case
-                    var styleId = MapStyle(kvp.Value.Style, _wb.Sheets[si].Style);
+                    var styleId = MapStyle(new XlStyle().Inherit(kvp.Value.Style).Inherit(fullSheetStyle));
                     if (styleId != 0)
                         writer.Write($" style=\"{styleId}\"");
                     writer.WriteLine(" />");
@@ -93,7 +94,7 @@ internal class XlWriter : IDisposable
             }
 
             writer.WriteLine("  <sheetData>");
-            var sw = new XlSheetWriter(this, _wb.Sheets[si], writer);
+            var sw = new XlSheetWriter(this, fullSheetStyle, writer);
             _wb.Sheets[si].WriteSheet(sw);
             sw.Finalise();
 
@@ -395,38 +396,23 @@ internal class XlWriter : IDisposable
         return sb.ToString();
     }
 
-    internal int MapStyle(XlStyle? style, XlStyle? sheetStyle)
+    private static T nn<T>(T? v) where T : struct => v ?? throw new NullReferenceException();
+    private static T nn<T>(T? v) where T : class => v ?? throw new NullReferenceException();
+
+    /// <param name="s">Style with full inheritance applied.</param>
+    internal int MapStyle(XlStyle s)
     {
-        string Format = style?.Format ?? sheetStyle?.Format ?? _wb.Style.Format!;
-        string Font = style?.Font ?? sheetStyle?.Font ?? _wb.Style.Font!;
-        double Size = style?.Size ?? sheetStyle?.Size ?? _wb.Style.Size!.Value;
-        bool Bold = style?.Bold ?? sheetStyle?.Bold ?? _wb.Style.Bold!.Value;
-        bool Italic = style?.Italic ?? sheetStyle?.Italic ?? _wb.Style.Italic!.Value;
-        string Color = style?.Color ?? sheetStyle?.Color ?? _wb.Style.Color!;
-        string FillColor = style?.FillColor ?? sheetStyle?.FillColor ?? _wb.Style.FillColor!;
-        XlHorz Horz = style?.Horz ?? sheetStyle?.Horz ?? _wb.Style.Horz!.Value;
-        XlVert Vert = style?.Vert ?? sheetStyle?.Vert ?? _wb.Style.Vert!.Value;
-        bool Wrap = style?.Wrap ?? sheetStyle?.Wrap ?? _wb.Style.Wrap!.Value;
-        XlBorder BrLeft = style?.BrLeft ?? sheetStyle?.BrLeft ?? _wb.Style.BrLeft!.Value;
-        string BrLeftColor = style?.BrLeftColor ?? sheetStyle?.BrLeftColor ?? _wb.Style.BrLeftColor!;
-        XlBorder BrRight = style?.BrRight ?? sheetStyle?.BrRight ?? _wb.Style.BrRight!.Value;
-        string BrRightColor = style?.BrRightColor ?? sheetStyle?.BrRightColor ?? _wb.Style.BrRightColor!;
-        XlBorder BrTop = style?.BrTop ?? sheetStyle?.BrTop ?? _wb.Style.BrTop!.Value;
-        string BrTopColor = style?.BrTopColor ?? sheetStyle?.BrTopColor ?? _wb.Style.BrTopColor!;
-        XlBorder BrBot = style?.BrBot ?? sheetStyle?.BrBot ?? _wb.Style.BrBot!.Value;
-        string BrBotColor = style?.BrBotColor ?? sheetStyle?.BrBotColor ?? _wb.Style.BrBotColor!;
-
-        int numFmtId = XlFmt.StandardNumberFormatId(Format);
+        int numFmtId = XlFmt.StandardNumberFormatId(nn(s.Format));
         if (numFmtId < 0)
-            numFmtId = getOrAddXmlId(_sxNumFmts, Format, 164);
+            numFmtId = getOrAddXmlId(_sxNumFmts, nn(s.Format), 164);
 
-        var fontXml = makeFontXml(Font, Size, Bold, Italic, Color);
+        var fontXml = makeFontXml(nn(s.Font), nn(s.Size), nn(s.Bold), nn(s.Italic), nn(s.Color));
         int fontId = getOrAddXmlId(_sxFontsXml, fontXml, 0);
 
-        var fillXml = makeFillXml(FillColor);
+        var fillXml = makeFillXml(nn(s.FillColor));
         int fillId = getOrAddXmlId(_sxFillsXml, fillXml, 0);
 
-        var borderXml = makeBorderXml(BrLeft, BrLeftColor, BrRight, BrRightColor, BrTop, BrTopColor, BrBot, BrBotColor);
+        var borderXml = makeBorderXml(nn(s.BrLeft), nn(s.BrLeftColor), nn(s.BrRight), nn(s.BrRightColor), nn(s.BrTop), nn(s.BrTopColor), nn(s.BrBot), nn(s.BrBotColor));
         int borderId = getOrAddXmlId(_sxBordersXml, borderXml, 0);
 
         var xf = new XElement("xf",
@@ -441,12 +427,12 @@ internal class XlWriter : IDisposable
         if (fillId != 0) xf.Add(new XAttribute("applyFill", 1));
         if (borderId != 0) xf.Add(new XAttribute("applyBorder", 1));
 
-        if (Horz != XlHorz.Left || Vert != XlVert.Bottom || Wrap)
+        if (nn(s.Horz) != XlHorz.Left || nn(s.Vert) != XlVert.Bottom || nn(s.Wrap))
         {
             var alignment = new XElement("alignment");
-            if (Horz != XlHorz.Left) alignment.Add(new XAttribute("horizontal", Horz.ToString().ToLower()));
-            if (Vert != XlVert.Bottom) alignment.Add(new XAttribute("vertical", Vert.ToString().ToLower()));
-            if (Wrap) alignment.Add(new XAttribute("wrapText", 1));
+            if (nn(s.Horz) != XlHorz.Left) alignment.Add(new XAttribute("horizontal", nn(s.Horz).ToString().ToLower()));
+            if (nn(s.Vert) != XlVert.Bottom) alignment.Add(new XAttribute("vertical", nn(s.Vert).ToString().ToLower()));
+            if (nn(s.Wrap)) alignment.Add(new XAttribute("wrapText", 1));
             xf.Add(alignment);
             xf.Add(new XAttribute("applyAlignment", 1));
         }

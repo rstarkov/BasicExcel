@@ -99,6 +99,31 @@ public record class XlStyle
     public string? BrBotColor { get; set; }
 
     public XlStyleMod Mod() => new XlStyleMod(this);
+
+    /// <summary>Inherit non-null properties from the parent style, modifying this style in-place.</summary>
+    public XlStyle Inherit(XlStyle? parent)
+    {
+        if (parent == null) return this;
+        Format ??= parent.Format;
+        Font ??= parent.Font;
+        Size ??= parent.Size;
+        Bold ??= parent.Bold;
+        Italic ??= parent.Italic;
+        Color ??= parent.Color;
+        FillColor ??= parent.FillColor;
+        Horz ??= parent.Horz;
+        Vert ??= parent.Vert;
+        Wrap ??= parent.Wrap;
+        BrLeft ??= parent.BrLeft;
+        BrLeftColor ??= parent.BrLeftColor;
+        BrRight ??= parent.BrRight;
+        BrRightColor ??= parent.BrRightColor;
+        BrTop ??= parent.BrTop;
+        BrTopColor ??= parent.BrTopColor;
+        BrBot ??= parent.BrBot;
+        BrBotColor ??= parent.BrBotColor;
+        return this;
+    }
 }
 
 public enum XlHorz { Left = 0, Center, Right } // do not rename - .ToString written to output files

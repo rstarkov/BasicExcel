@@ -5,14 +5,16 @@ namespace BasicExcel;
 public class XlSheetWriter
 {
     private XlWriter _xlWriter;
-    private XlSheet _sheet;
+    private XlStyle _parentStyle;
     private StreamWriter _stream;
     private bool _rowStarted = false;
+    private XlStyle? _rowStyle = null;
 
-    internal XlSheetWriter(XlWriter writer, XlSheet sheet, StreamWriter stream)
+    /// <param name="parentStyle">A merged sheet + workbook default style.</param>
+    internal XlSheetWriter(XlWriter writer, XlStyle parentStyle, StreamWriter stream)
     {
         _xlWriter = writer;
-        _sheet = sheet;
+        _parentStyle = parentStyle;
         _stream = stream;
     }
 
@@ -43,8 +45,9 @@ public class XlSheetWriter
         if (_rowStarted)
             EndRow();
         _rowStarted = true;
+        _rowStyle = rowStyle;
         _stream.Write($"    <row");
-        int styleId = _xlWriter.MapStyle(rowStyle, _sheet.Style);
+        int styleId = _xlWriter.MapStyle(new XlStyle().Inherit(rowStyle).Inherit(_parentStyle));
         if (styleId != 0)
             _stream.Write($" s=\"{styleId}\" customFormat=\"1\"");
         _stream.Write(">");
@@ -55,6 +58,7 @@ public class XlSheetWriter
         if (!_rowStarted) throw new Exception();
         _stream.WriteLine("</row>");
         _rowStarted = false;
+        _rowStyle = null;
         Row++;
         Col = 1;
     }
@@ -84,7 +88,7 @@ public class XlSheetWriter
         _stream.Write("<c");
         if (type != null)
             _stream.Write($" t=\"{type}\"");
-        int styleId = _xlWriter.MapStyle(style, _sheet.Style);
+        int styleId = _xlWriter.MapStyle(new XlStyle().Inherit(style).Inherit(_rowStyle).Inherit(_parentStyle));
         if (styleId != 0)
             _stream.Write($" s=\"{styleId}\"");
         _stream.Write("><v>");
