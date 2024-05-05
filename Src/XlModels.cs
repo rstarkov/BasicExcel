@@ -141,7 +141,10 @@ public static class XlFmt
     public const string PercentWhole = "0%";
     public const string PercentFrac = "0.00%";
     public const string Scientific = "0.00E+00";
-    public const string LocalDate = "d/m/yyyy";
+    /// <summary>Locale-specific date-only format, eg "31/01/2024" in UK.</summary>
+    public const string LocaleDate = "<LD>"; // don't use a specific string here like d/m/yyyy because that prevents using an actual literal "d/m/yyyy" as a format, remapping it to a locale-specific format
+    /// <summary>Locale-specific date-time format, eg "31/01/2024 21:59" in UK.</summary>
+    public const string LocaleDateTime = "<LDT>";
     public const string Text = "@";
 
     // some non-builtin helpers
@@ -159,7 +162,8 @@ public static class XlFmt
             PercentWhole => 9,
             PercentFrac => 10,
             Scientific => 11,
-            LocalDate => 14,
+            LocaleDate => 14,
+            LocaleDateTime => 22,
             Text => 49,
             _ => -1,
         };

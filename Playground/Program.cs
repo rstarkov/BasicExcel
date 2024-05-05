@@ -58,11 +58,13 @@ internal class Program
         var wb4 = new XlWorkbook();
         wb4.Sheets.Add(new XlSheet());
         wb4.Sheets[0].Columns[1].Width = 11;
-        wb4.Sheets[0].Columns[1].Style.Mod().Fmt(XlFmt.LocalDate);
+        wb4.Sheets[0].Columns[1].Style.Mod().Fmt(XlFmt.LocaleDate);
         wb4.Sheets[0].Columns[2].Width = 30;
         wb4.Sheets[0].Columns[2].Style.Mod().Align(XlHorz.Center);
         wb4.Sheets[0].Columns[3].Width = 12;
         wb4.Sheets[0].Columns[3].Style.Mod().Fmt(XlFmt.AccountingGbp);
+        wb4.Sheets[0].Columns[4].Width = 15;
+        wb4.Sheets[0].Columns[4].Style.Mod().Fmt(XlFmt.LocaleDateTime);
         wb4.Sheets[0].WriteSheet = sw =>
         {
             sw.StartRow(new XlStyle().Mod().Color("FFFFFF", "008800").BorderB(XlBorder.Medium).Align(XlVert.Center), height: 32);
@@ -75,6 +77,7 @@ internal class Program
                 sw.AddCell(DateTime.Today.AddDays(-i));
                 sw.AddCell("Foobar");
                 sw.AddCell(Random.Shared.Next(0, 2000_00) / 10m);
+                sw.AddCell(DateTime.Now.AddDays(-i));
             }
         };
         wb4.Save("formats.xlsx");
