@@ -77,8 +77,9 @@ internal class XlWriter : IDisposable
                   <sheetData>
                 """);
 
-            var sw = new XlSheetWriter(this, _wb.Sheets[si]);
+            var sw = new XlSheetWriter(this, _wb.Sheets[si], writer);
             _wb.Sheets[si].WriteSheet(sw);
+            sw.Finalise();
 
             writer.Write(
                 """
@@ -321,6 +322,7 @@ internal class XlWriter : IDisposable
 
         _sxFontsXml.Add(makeFontXml(s.Font!, s.Size!.Value, s.Bold!.Value, s.Italic!.Value, s.Color!), 0);
         _sxFillsXml.Add(makeFillXml(s.FillColor!), 0);
+        _sxFillsXml.Add("""<fill><patternFill patternType="gray125" /></fill>""", 1); // Excel wants this fill to be present
         _sxBordersXml.Add(makeBorderXml(s.BrLeft!.Value, s.BrLeftColor!, s.BrRight!.Value, s.BrRightColor!, s.BrTop!.Value, s.BrTopColor!, s.BrBot!.Value, s.BrBotColor!), 0);
         _sxXfsXml.Add(new XElement("xf", new XAttribute("numFmtId", 0), new XAttribute("fontId", 0), new XAttribute("fillId", 0), new XAttribute("borderId", 0), new XAttribute("xfId", 0)).ToString(SaveOptions.DisableFormatting), 0);
     }
