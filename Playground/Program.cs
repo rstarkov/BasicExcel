@@ -28,6 +28,11 @@ internal class Program
             sw.AddCell(Math.PI);
             sw.AddCell(true);
             sw.AddCell(false);
+            sw.StartRow(3);
+            sw.AddCell("Row 3");
+            sw.AddCell("Row 3");
+            sw.AddCell(5, "Row 3 Col 5");
+            sw.AddCell(7, 4, "Row 7 Col 4");
         };
         wb2.Save("basic.xlsx");
     }
