@@ -67,12 +67,50 @@ public class XlStyleMod
 
     public XlStyleMod Border(XlBorder type, string? color = null)
     {
+        style.BrLeft = style.BrRight = style.BrTop = style.BrBot = type;
+        if (color != null) style.BrLeftColor = style.BrRightColor = style.BrTopColor = style.BrBotColor = color;
+        return this;
+    }
+
+    public XlStyleMod BorderL(XlBorder type, string? color = null)
+    {
         style.BrLeft = type;
+        if (color != null) style.BrLeftColor = color;
+        return this;
+    }
+
+    public XlStyleMod BorderR(XlBorder type, string? color = null)
+    {
         style.BrRight = type;
+        if (color != null) style.BrRightColor = color;
+        return this;
+    }
+
+    public XlStyleMod BorderT(XlBorder type, string? color = null)
+    {
         style.BrTop = type;
+        if (color != null) style.BrTopColor = color;
+        return this;
+    }
+
+    public XlStyleMod BorderB(XlBorder type, string? color = null)
+    {
         style.BrBot = type;
-        if (color != null)
-            style.BrLeftColor = style.BrRightColor = style.BrTopColor = style.BrBotColor = color;
+        if (color != null) style.BrBotColor = color;
+        return this;
+    }
+
+    public XlStyleMod BorderLR(XlBorder type, string? color = null)
+    {
+        style.BrLeft = style.BrRight = type;
+        if (color != null) style.BrLeftColor = style.BrRightColor = color;
+        return this;
+    }
+
+    public XlStyleMod BorderTB(XlBorder type, string? color = null)
+    {
+        style.BrTop = style.BrBot = type;
+        if (color != null) style.BrTopColor = style.BrBotColor = color;
         return this;
     }
 }

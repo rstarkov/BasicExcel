@@ -38,7 +38,7 @@ internal class Program
 
         var wb3 = new XlWorkbook();
         wb3.Sheets.Add(new XlSheet());
-        wb3.Sheets[0].Columns[2].Style.Mod().Color("EEEEEE", "228811");
+        wb3.Sheets[0].Columns[2].Style.Mod().Color("EEEEEE", "228811").BorderL(XlBorder.Thick, "0000FF");
         wb3.Sheets[0].Columns[3].Width = 20;
         wb3.Sheets[0].WriteSheet = sw =>
         {
@@ -49,7 +49,7 @@ internal class Program
             sw.AddCell(6, 1, "foo", new XlStyle().Mod().Align(XlVert.Center));
             sw.AddCell("foobar", new XlStyle().Mod().Font(20));
             sw.AddCell("foobar абвгд", new XlStyle().Mod().Font("Segoe UI", italic: true));
-            sw.AddCell(5, "foo", new XlStyle().Mod().Align(XlHorz.Right));
+            sw.AddCell(5, "foo", new XlStyle().Mod().Align(XlHorz.Right).BorderLR(XlBorder.Dash, "FF8080").BorderT(XlBorder.Double).BorderB(XlBorder.Thin));
         };
         wb3.Save("styles.xlsx");
     }
