@@ -93,7 +93,7 @@ internal class Program
         Console.WriteLine($"{(DateTime.UtcNow - start).TotalMilliseconds:0}ms"); // 30k cells = 165ms
 
         var wb5 = new XlWorkbook();
-        wb5.Style.Mod().Color("555500").Font("Courier New", 15, italic: true).Align(XlHorz.Center);
+        wb5.Style.Mod().Color("555500").Font("Courier New", 15, italic: true).Align(XlHorz.Center).Fmt(XlFmt.AccountingGbp);
         wb5.Sheets.Add(new XlSheet { Name = "Book style" });
         wb5.Sheets[0].WriteSheet = sw =>
         {
@@ -101,7 +101,7 @@ internal class Program
             {
                 sw.StartRow();
                 sw.AddCell("foo");
-                sw.AddCell("BAR");
+                sw.AddCell(0.4725);
                 sw.AddCell(7, "baz");
             }
             sw.AddCell(20, 7, "end");
@@ -110,14 +110,14 @@ internal class Program
 
         var wb6 = new XlWorkbook();
         wb6.Sheets.Add(new XlSheet { Name = "Sheet style" });
-        wb6.Sheets[0].Style!.Mod().Color("00FF00", "0000FF").Font("Arial", 14, bold: true).Align(XlHorz.Right, XlVert.Top).Border(XlBorder.Double, "00FF00");
+        wb6.Sheets[0].Style!.Mod().Color("00FF00", "0000FF").Font("Arial", 14, bold: true).Align(XlHorz.Right, XlVert.Top).Border(XlBorder.Double, "00FF00").Fmt(XlFmt.PercentFrac);
         wb6.Sheets[0].WriteSheet = sw =>
         {
             for (int i = 0; i < 10; i++)
             {
                 sw.StartRow();
                 sw.AddCell("foo");
-                sw.AddCell("BAR");
+                sw.AddCell(0.4725);
                 sw.AddCell(7, "baz");
             }
             sw.AddCell(20, 7, "end");

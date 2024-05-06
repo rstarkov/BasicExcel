@@ -359,11 +359,14 @@ internal class XlWriter : IDisposable
         if (s.BrLeft != XlBorder.None || s.BrRight != XlBorder.None || s.BrTop != XlBorder.None || s.BrBot != XlBorder.None) throw new NotSupportedException("A workbook-wide default border is not supported by Excel.");
         if (s.BrLeftColor != "" || s.BrRightColor != "" || s.BrTopColor != "" || s.BrBotColor != "") throw new NotSupportedException("A workbook-wide default border color is not supported by Excel.");
 
+        var numFmtId = XlFmt.StandardNumberFormatId(s.Format!);
+        if (numFmtId < 0)
+            _sxNumFmts.Add(s.Format!, numFmtId = 164 /* assignment */);
         _sxFontsXml.Add(makeFontXml(s.Font!, s.Size!.Value, s.Bold!.Value, s.Italic!.Value, s.Color!), 0);
         _sxFillsXml.Add(makeFillXml(s.FillColor!), 0);
         _sxFillsXml.Add("""<fill><patternFill patternType="gray125" /></fill>""", 1); // Excel wants this fill to be present
         _sxBordersXml.Add(makeBorderXml(s.BrLeft!.Value, s.BrLeftColor!, s.BrRight!.Value, s.BrRightColor!, s.BrTop!.Value, s.BrTopColor!, s.BrBot!.Value, s.BrBotColor!), 0);
-        _sxXfsXml.Add(makeXfXml(0, 0, 0, 0, s.Horz!.Value, s.Vert!.Value, s.Wrap!.Value), 0);
+        _sxXfsXml.Add(makeXfXml(numFmtId, 0, 0, 0, s.Horz!.Value, s.Vert!.Value, s.Wrap!.Value), 0);
     }
 
     private static string makeFontXml(string fontName, double fontSize, bool bold, bool italic, string color)
