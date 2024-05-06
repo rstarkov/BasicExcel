@@ -47,6 +47,14 @@ public class XlWorkbook
         using var writer = new XlWriter(this, stream);
         writer.Write();
     }
+
+    public byte[] SaveToArray()
+    {
+        using var stream = new MemoryStream();
+        using (var writer = new XlWriter(this, stream))
+            writer.Write();
+        return stream.ToArray();
+    }
 }
 
 public class XlSheet
