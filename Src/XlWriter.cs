@@ -1,4 +1,4 @@
-using System.IO.Compression;
+﻿using System.IO.Compression;
 using System.Security;
 using System.Text;
 using System.Xml.Linq;
@@ -44,6 +44,8 @@ internal class XlWriter : IDisposable
             _wb.Sheets.Add(new XlSheet());
         if (_wb.Sheets.Count != _wb.Sheets.Distinct().Count())
             throw new InvalidOperationException("Multiple instances of the same sheet are not supported.");
+        if (_wb.ActiveSheet != null && !_wb.Sheets.Contains(_wb.ActiveSheet))
+            throw new InvalidOperationException("ActiveSheet is not in the list of Sheets.");
         foreach (var dupes in _wb.Sheets.GroupBy(s => s.Name).Where(g => g.Count() > 1))
         {
             var i = 1;
@@ -70,7 +72,7 @@ internal class XlWriter : IDisposable
               <dimension ref="A1"/>
             """);
         var viewXml = new XElement("sheetView", new XAttribute("workbookViewId", "0"));
-        if (_wb.ActiveSheet == s)
+        if (_wb.ActiveSheet == s || (_wb.ActiveSheet == null && si == 0))
             viewXml.Add(new XAttribute("tabSelected", "1"));
         if (s.FreezeRows != null || s.FreezeCols != null)
         {
