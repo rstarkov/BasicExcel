@@ -1,4 +1,4 @@
-﻿using System.IO.Compression;
+using System.IO.Compression;
 using System.Security;
 using System.Text;
 using System.Xml.Linq;
@@ -153,7 +153,7 @@ internal class XlWriter : IDisposable
         }
         writer.WriteLine($"""  </fonts>""");
 
-        writer.WriteLine($"""  <fills count="{_sxFontsXml.Count}">""");
+        writer.WriteLine($"""  <fills count="{_sxFillsXml.Count}">""");
         foreach (var kvp in _sxFillsXml.OrderBy(kvp => kvp.Value))
         {
             writer.Write("    ");
