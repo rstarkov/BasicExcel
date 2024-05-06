@@ -1,4 +1,4 @@
-﻿using System.IO.Compression;
+using System.IO.Compression;
 using System.Xml.Linq;
 
 namespace BasicExcel.Playground;
@@ -38,7 +38,7 @@ internal class Program
 
         var wb3 = new XlWorkbook();
         wb3.Sheets.Add(new XlSheet());
-        wb3.Sheets[0].Columns[2].Style.Mod().Color("EEEEEE", "228811").BorderL(XlBorder.Thick, "0000FF");
+        wb3.Sheets[0].Columns[2].Style!.Mod().Color("EEEEEE", "228811").BorderL(XlBorder.Thick, "0000FF");
         wb3.Sheets[0].Columns[3].Width = 20;
         wb3.Sheets[0].WriteSheet = sw =>
         {
@@ -59,13 +59,13 @@ internal class Program
         wb4.Sheets.Add(new XlSheet());
         wb4.Sheets[0].FreezeRows = 1;
         wb4.Sheets[0].Columns[1].Width = 11;
-        wb4.Sheets[0].Columns[1].Style.Mod().Fmt(XlFmt.LocaleDate);
+        wb4.Sheets[0].Columns[1].Style!.Mod().Fmt(XlFmt.LocaleDate);
         wb4.Sheets[0].Columns[2].Width = 30;
-        wb4.Sheets[0].Columns[2].Style.Mod().Align(XlHorz.Center);
+        wb4.Sheets[0].Columns[2].Style!.Mod().Align(XlHorz.Center);
         wb4.Sheets[0].Columns[3].Width = 12;
-        wb4.Sheets[0].Columns[3].Style.Mod().Fmt(XlFmt.AccountingGbp);
+        wb4.Sheets[0].Columns[3].Style!.Mod().Fmt(XlFmt.AccountingGbp);
         wb4.Sheets[0].Columns[4].Width = 15;
-        wb4.Sheets[0].Columns[4].Style.Mod().Fmt(XlFmt.LocaleDateTime);
+        wb4.Sheets[0].Columns[4].Style!.Mod().Fmt(XlFmt.LocaleDateTime);
         wb4.Sheets[0].WriteSheet = sw =>
         {
             sw.StartRow(XlStyle.New().Color("FFFFFF", "008800").BorderB(XlBorder.Medium).Align(XlVert.Center), height: 32);
