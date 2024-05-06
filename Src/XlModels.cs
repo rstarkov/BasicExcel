@@ -56,8 +56,7 @@ public class XlSheet
     public AutoDictionary<int, XlColumn> Columns { get; } = new(_ => new());
     public int? FreezeRows { get; set; } = null;
     public int? FreezeCols { get; set; } = null;
-    /// <summary>Default style for all cells in the sheet, unless overridden. Merged with the workbook default style.</summary>
-    public XlStyle? Style { get; set; } = null;
+    public XlStyle? Style { get; set; } = new();
 
     public Action<XlSheetWriter> WriteSheet { get; set; } = (XlSheetWriter w) => { };
 }
@@ -65,7 +64,7 @@ public class XlSheet
 public class XlColumn
 {
     public double? Width { get; set; } = null;
-    public XlStyle Style { get; set; } = new();
+    public XlStyle? Style { get; set; } = new();
 }
 
 public record class XlStyle
