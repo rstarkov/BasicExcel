@@ -66,19 +66,22 @@ internal class Program
         wb4.Sheets[0].Columns[3].Style!.Mod().Fmt(XlFmt.AccountingGbp);
         wb4.Sheets[0].Columns[4].Width = 15;
         wb4.Sheets[0].Columns[4].Style!.Mod().Fmt(XlFmt.LocaleDateTime);
+        wb4.Sheets[0].Columns[5].Style!.Mod().Align(XlHorz.Left);
         wb4.Sheets[0].WriteSheet = sw =>
         {
             sw.StartRow(XlStyle.New().Color("FFFFFF", "008800").BorderB(XlBorder.Medium).Align(XlVert.Center), height: 32);
             sw.AddCell("Date");
             sw.AddCell("Centered");
             sw.AddCell("Total");
+            sw.AddCell(5, "Left-aligned num");
             for (int i = 0; i < 20; i++)
             {
                 sw.StartRow();
                 sw.AddCell(DateTime.Today.AddDays(-i));
                 sw.AddCell("Foobar");
-                sw.AddCell(Random.Shared.Next(0, 2000_00) / 10m);
+                sw.AddCell(Random.Shared.Next(0, 2000_00) / 100m);
                 sw.AddCell(DateTime.Now.AddDays(-i));
+                sw.AddCell(Random.Shared.Next(0, 999));
             }
         };
         wb4.Sheets.Add(new XlSheet { Name = "Freeze 1 col", FreezeCols = 1 });

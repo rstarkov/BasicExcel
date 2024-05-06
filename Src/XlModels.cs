@@ -22,7 +22,7 @@ public class XlWorkbook
         Bold = false,
         Italic = false,
         FillColor = "",
-        Horz = XlHorz.Left,
+        Horz = XlHorz.Auto,
         Vert = XlVert.Bottom,
         Wrap = false,
         BrLeft = XlBorder.None,
@@ -130,7 +130,7 @@ public record class XlStyle
     public static XlStyleMod New(XlStyle? inherit) => new XlStyleMod(new XlStyle().Inherit(inherit));
 }
 
-public enum XlHorz { Left = 0, Center, Right } // do not rename - .ToString written to output files
+public enum XlHorz { Auto = 0, Left, Center, Right } // do not rename - .ToString written to output files
 public enum XlVert { Bottom = 0, Center, Top } // do not rename - .ToString written to output files
 public enum XlBorder { None = 0, Hair, Thin, Medium, Thick, Dot, Dash, MediumDash, DashDot, MediumDashDot, DashDotDot, MediumDashDotDot, SlantDashDot, Double } // do not reorder - see XlWriter lookup array
 

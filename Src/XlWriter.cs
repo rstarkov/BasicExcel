@@ -447,10 +447,10 @@ internal class XlWriter : IDisposable
         if (fillId != 0) xf.Add(new XAttribute("applyFill", 1));
         if (borderId != 0) xf.Add(new XAttribute("applyBorder", 1));
 
-        if (nn(s.Horz) != XlHorz.Left || nn(s.Vert) != XlVert.Bottom || nn(s.Wrap))
+        if (nn(s.Horz) != XlHorz.Auto || nn(s.Vert) != XlVert.Bottom || nn(s.Wrap))
         {
             var alignment = new XElement("alignment");
-            if (nn(s.Horz) != XlHorz.Left) alignment.Add(new XAttribute("horizontal", nn(s.Horz).ToString().ToLower()));
+            if (nn(s.Horz) != XlHorz.Auto) alignment.Add(new XAttribute("horizontal", nn(s.Horz).ToString().ToLower()));
             if (nn(s.Vert) != XlVert.Bottom) alignment.Add(new XAttribute("vertical", nn(s.Vert).ToString().ToLower()));
             if (nn(s.Wrap)) alignment.Add(new XAttribute("wrapText", 1));
             xf.Add(alignment);
