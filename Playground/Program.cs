@@ -42,15 +42,15 @@ internal class Program
         wb3.Sheets[0].Columns[3].Width = 20;
         wb3.Sheets[0].WriteSheet = sw =>
         {
-            sw.AddCell(2, 5, "Row 2 Col 5", new XlStyle().Mod().Color("AA4422"));
-            sw.StartRow(4, new XlStyle().Mod().Fill("FFDD22").Font(bold: true).Align(XlHorz.Center));
+            sw.AddCell(2, 5, "Row 2 Col 5", XlStyle.New().Color("AA4422"));
+            sw.StartRow(4, XlStyle.New().Fill("FFDD22").Font(bold: true).Align(XlHorz.Center));
             sw.AddCell("foo");
             sw.AddCell("foobar");
             sw.AddCell(6, "bar");
-            sw.AddCell(6, 1, "foo", new XlStyle().Mod().Align(XlVert.Center));
-            sw.AddCell("foobar", new XlStyle().Mod().Font(20));
-            sw.AddCell("foobar абвгд", new XlStyle().Mod().Font("Segoe UI", italic: true));
-            sw.AddCell(5, "foo", new XlStyle().Mod().Align(XlHorz.Right).BorderLR(XlBorder.Dash, "FF8080").BorderT(XlBorder.Double).BorderB(XlBorder.Thin));
+            sw.AddCell(6, 1, "foo", XlStyle.New().Align(XlVert.Center));
+            sw.AddCell("foobar", XlStyle.New().Font(20));
+            sw.AddCell("foobar абвгд", XlStyle.New().Font("Segoe UI", italic: true));
+            sw.AddCell(5, "foo", XlStyle.New().Align(XlHorz.Right).BorderLR(XlBorder.Dash, "FF8080").BorderT(XlBorder.Double).BorderB(XlBorder.Thin));
         };
         wb3.Save("styles.xlsx");
 
@@ -68,7 +68,7 @@ internal class Program
         wb4.Sheets[0].Columns[4].Style.Mod().Fmt(XlFmt.LocaleDateTime);
         wb4.Sheets[0].WriteSheet = sw =>
         {
-            sw.StartRow(new XlStyle().Mod().Color("FFFFFF", "008800").BorderB(XlBorder.Medium).Align(XlVert.Center), height: 32);
+            sw.StartRow(XlStyle.New().Color("FFFFFF", "008800").BorderB(XlBorder.Medium).Align(XlVert.Center), height: 32);
             sw.AddCell("Date");
             sw.AddCell("Centered");
             sw.AddCell("Total");

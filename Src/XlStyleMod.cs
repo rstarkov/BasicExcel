@@ -113,4 +113,10 @@ public class XlStyleMod
         if (color != null) style.BrTopColor = style.BrBotColor = color;
         return this;
     }
+
+    public XlStyleMod Inherit(XlStyle? s)
+    {
+        style.Inherit(s);
+        return this;
+    }
 }

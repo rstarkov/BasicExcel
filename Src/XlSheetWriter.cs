@@ -48,7 +48,7 @@ public class XlSheetWriter
         if (_rowStarted)
             EndRow();
         _rowStarted = true;
-        _rowStyle = new XlStyle().Inherit(rowStyle).Inherit(_parentStyle);
+        _rowStyle = XlStyle.New(rowStyle).Inherit(_parentStyle);
         _stream.Write($"    <row");
         if (height != null)
             _stream.Write($" ht=\"{height}\" customHeight=\"1\"");
@@ -97,7 +97,7 @@ public class XlSheetWriter
         if (type != null)
             _stream.Write($" t=\"{type}\"");
         var colStyle = _sheet.Columns.TryGetValue(Col, out var c) ? c.Style : null;
-        int styleId = _xlWriter.MapStyle(new XlStyle().Inherit(style).Inherit(colStyle).Inherit(_rowStyle));
+        int styleId = _xlWriter.MapStyle(XlStyle.New(style).Inherit(colStyle).Inherit(_rowStyle));
         if (styleId != 0)
             _stream.Write($" s=\"{styleId}\"");
         _stream.Write("><v>");
@@ -114,7 +114,7 @@ public class XlSheetWriter
         while (Col < col)
         {
             var colStyle = _sheet.Columns.TryGetValue(Col, out var c) ? c.Style : null;
-            int styleId = _xlWriter.MapStyle(new XlStyle().Inherit(colStyle).Inherit(_rowStyle));
+            int styleId = _xlWriter.MapStyle(XlStyle.New(colStyle).Inherit(_rowStyle));
             if (styleId != 0)
                 _stream.Write($"<c s=\"{styleId}\"></c>");
             else

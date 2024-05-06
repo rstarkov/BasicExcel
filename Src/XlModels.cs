@@ -98,8 +98,6 @@ public record class XlStyle
     /// <summary>Border color as RGB or ARGB hex, or empty string for "auto", or null to inherit.</summary>
     public string? BrBotColor { get; set; }
 
-    public XlStyleMod Mod() => new XlStyleMod(this);
-
     /// <summary>Inherit non-null properties from the parent style, modifying this style in-place.</summary>
     public XlStyle Inherit(XlStyle? parent)
     {
@@ -124,6 +122,13 @@ public record class XlStyle
         BrBotColor ??= parent.BrBotColor;
         return this;
     }
+
+    /// <summary>A helper for modifying this style in place using a fluent style.</summary>
+    public XlStyleMod Mod() => new XlStyleMod(this);
+    /// <summary>A helper for creating a new style from scratch using fluent style. Same as <c>new XlStyle().Mod()</c>.</summary>
+    public static XlStyleMod New() => new XlStyleMod(new XlStyle());
+    /// <summary>A helper for creating a new style by cloning another.</summary>
+    public static XlStyleMod New(XlStyle? inherit) => new XlStyleMod(new XlStyle().Inherit(inherit));
 }
 
 public enum XlHorz { Left = 0, Center, Right } // do not rename - .ToString written to output files

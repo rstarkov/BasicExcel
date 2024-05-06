@@ -93,7 +93,7 @@ internal class XlWriter : IDisposable
                 <sheetFormatPr defaultRowHeight="14.5" x14ac:dyDescent="0.35" />
             """);
 
-        var fullSheetStyle = new XlStyle().Inherit(s.Style).Inherit(_wb.Style);
+        var fullSheetStyle = XlStyle.New(s.Style).Inherit(_wb.Style);
         if (s.Columns.Count > 0)
         {
             writer.WriteLine("  <cols>");
@@ -102,7 +102,7 @@ internal class XlWriter : IDisposable
                 writer.Write($"    <col min=\"{kvp.Key}\" max=\"{kvp.Key}\" width=\"{kvp.Value.Width ?? 8.7265625:0.###}\"");
                 if (kvp.Value.Width != null) // width is mandatory; without it the style has no effect. "bestFit" doesn't auto-size on load so not supported here.
                     writer.Write(" customWidth=\"1\""); // "customWidth" doesn't seem to do anything but write it out to match what Excel does just in case
-                var styleId = MapStyle(new XlStyle().Inherit(kvp.Value.Style).Inherit(fullSheetStyle));
+                var styleId = MapStyle(XlStyle.New(kvp.Value.Style).Inherit(fullSheetStyle));
                 if (styleId != 0)
                     writer.Write($" style=\"{styleId}\"");
                 writer.WriteLine(" />");
