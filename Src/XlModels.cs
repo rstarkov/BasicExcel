@@ -35,9 +35,9 @@ public class XlWorkbook
         BrBotColor = "",
     };
 
-    public void Save(Stream stream)
+    public void Save(Stream stream, bool leaveOpen = false)
     {
-        using var writer = new XlWriter(this, stream);
+        using var writer = new XlWriter(this, stream, leaveOpen);
         writer.Write();
     }
 

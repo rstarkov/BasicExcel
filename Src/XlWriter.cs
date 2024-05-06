@@ -10,10 +10,10 @@ internal class XlWriter : IDisposable
     private XlWorkbook _wb;
     private ZipArchive _zip;
 
-    public XlWriter(XlWorkbook workbook, Stream stream)
+    public XlWriter(XlWorkbook workbook, Stream stream, bool leaveOpen = false)
     {
         _wb = workbook;
-        _zip = new ZipArchive(stream, ZipArchiveMode.Create);
+        _zip = new ZipArchive(stream, ZipArchiveMode.Create, leaveOpen);
     }
 
     public void Dispose()
