@@ -1,4 +1,4 @@
-using System.IO.Compression;
+﻿using System.IO.Compression;
 using System.Security;
 using System.Text;
 using System.Xml.Linq;
@@ -68,7 +68,7 @@ internal class XlWriter : IDisposable
             """
             <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
             <worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="x14ac xr xr2 xr3" xmlns:x14ac="http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac" xmlns:xr="http://schemas.microsoft.com/office/spreadsheetml/2014/revision" xmlns:xr2="http://schemas.microsoft.com/office/spreadsheetml/2015/revision2" xmlns:xr3="http://schemas.microsoft.com/office/spreadsheetml/2016/revision3" xr:uid="{00000000-0001-0000-0000-000000000000}">
-                <dimension ref="A1"/>
+              <dimension ref="A1"/>
             """);
         var viewXml = new XElement("sheetView", new XAttribute("workbookViewId", "0"));
         if (_wb.ActiveSheet == s)
@@ -90,7 +90,7 @@ internal class XlWriter : IDisposable
         writer.WriteLine(
             """
 
-                <sheetFormatPr defaultRowHeight="14.5" x14ac:dyDescent="0.35" />
+              <sheetFormatPr defaultRowHeight="14.5" x14ac:dyDescent="0.35" />
             """);
 
         var fullSheetStyle = XlStyle.New(s.Style).Inherit(_wb.Style);
@@ -117,8 +117,8 @@ internal class XlWriter : IDisposable
 
         writer.Write(
             """
-                </sheetData>
-                <pageMargins left="0.7" right="0.7" top="0.75" bottom="0.75" header="0.3" footer="0.3" />
+              </sheetData>
+              <pageMargins left="0.7" right="0.7" top="0.75" bottom="0.75" header="0.3" footer="0.3" />
             </worksheet>
             """);
     }
@@ -171,9 +171,9 @@ internal class XlWriter : IDisposable
 
         writer.WriteLine(
             """
-                <cellStyleXfs count="1">
+              <cellStyleXfs count="1">
                 <xf numFmtId="0" fontId="0" fillId="0" borderId="0" />
-                </cellStyleXfs>
+              </cellStyleXfs>
             """);
 
         writer.WriteLine($"""  <cellXfs count="{_sxXfsXml.Count}">""");
@@ -186,13 +186,13 @@ internal class XlWriter : IDisposable
 
         writer.Write(
             """
-                <cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0" /></cellStyles>
-                <dxfs count="0" />
-                <tableStyles count="0" defaultTableStyle="TableStyleMedium2" defaultPivotStyle="PivotStyleLight16" />
-                <extLst>
+              <cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0" /></cellStyles>
+              <dxfs count="0" />
+              <tableStyles count="0" defaultTableStyle="TableStyleMedium2" defaultPivotStyle="PivotStyleLight16" />
+              <extLst>
                 <ext uri="{EB79DEF2-80B8-43e5-95BD-54CBDDF9020C}" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main"><x14:slicerStyles defaultSlicerStyle="SlicerStyleLight1" /></ext>
                 <ext uri="{9260A510-F301-46a8-8635-F512D64BE5F5}" xmlns:x15="http://schemas.microsoft.com/office/spreadsheetml/2010/11/main"><x15:timelineStyles defaultTimelineStyle="TimeSlicerStyleLight1" /></ext>
-                </extLst>
+              </extLst>
             </styleSheet>
             """);
     }
@@ -206,7 +206,7 @@ internal class XlWriter : IDisposable
               <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml" />
               <Default Extension="xml" ContentType="application/xml" />
               <Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml" />
-            {{string.Join("", _wb.Sheets.Select((s, i) => $"""  <Override PartName="/xl/worksheets/sheet{i + 1}.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml" />""" + "\r\n"))}}
+            {{string.Join("\r\n", _wb.Sheets.Select((s, i) => $"""  <Override PartName="/xl/worksheets/sheet{i + 1}.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml" />"""))}}
               <Override PartName="/xl/theme/theme1.xml" ContentType="application/vnd.openxmlformats-officedocument.theme+xml" />
               <Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml" />
               <Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml" />
@@ -243,7 +243,7 @@ internal class XlWriter : IDisposable
               </HeadingPairs>
               <TitlesOfParts>
                 <vt:vector size="{{_wb.Sheets.Count}}" baseType="lpstr">
-            {{string.Join("", _wb.Sheets.Select(s => $"""      <vt:lpstr>{SecurityElement.Escape(s.Name)}</vt:lpstr>""" + "\r\n"))}}
+            {{string.Join("\r\n", _wb.Sheets.Select(s => $"""      <vt:lpstr>{SecurityElement.Escape(s.Name)}</vt:lpstr>"""))}}
                 </vt:vector>
               </TitlesOfParts>
               <Company></Company>
@@ -269,7 +269,7 @@ internal class XlWriter : IDisposable
             $$"""
             <?xml version="1.0" encoding="utf-8" standalone="yes"?>
             <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
-            {{string.Join("", _wb.Sheets.Select((s, i) => $"""  <Relationship Id="rId{i + 1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet{i + 1}.xml" />""" + "\r\n"))}}
+            {{string.Join("\r\n", _wb.Sheets.Select((s, i) => $"""  <Relationship Id="rId{i + 1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet{i + 1}.xml" />"""))}}
               <Relationship Id="rId{{_wb.Sheets.Count + 1}}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme" Target="theme/theme1.xml" />
               <Relationship Id="rId{{_wb.Sheets.Count + 2}}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml" />
             </Relationships>
@@ -301,7 +301,7 @@ internal class XlWriter : IDisposable
                 <workbookView xWindow="-110" yWindow="-110" windowWidth="25820" windowHeight="14620"{{activeTab}} xr2:uid="{00000000-000D-0000-FFFF-FFFF00000000}" />
               </bookViews>
               <sheets>
-            {{string.Join("", _wb.Sheets.Select((s, i) => $"""    <sheet name="{SecurityElement.Escape(s.Name)}" sheetId="{i + 1}" r:id="rId{i + 1}" />""" + "\r\n"))}}
+            {{string.Join("\r\n", _wb.Sheets.Select((s, i) => $"""    <sheet name="{SecurityElement.Escape(s.Name)}" sheetId="{i + 1}" r:id="rId{i + 1}" />"""))}}
               </sheets>
               <calcPr calcId="191029" />
               <extLst>
