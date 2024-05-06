@@ -1,4 +1,4 @@
-using System.IO.Compression;
+﻿using System.IO.Compression;
 using System.Xml.Linq;
 
 namespace BasicExcel.Playground;
@@ -91,6 +91,38 @@ internal class Program
         wb4.Sheets.Add(new XlSheet { Name = "Freeze 2r2c", FreezeRows = 2, FreezeCols = 2 });
         wb4.Save("formats.xlsx");
         Console.WriteLine($"{(DateTime.UtcNow - start).TotalMilliseconds:0}ms"); // 30k cells = 165ms
+
+        var wb5 = new XlWorkbook();
+        wb5.Style.Mod().Color("555500").Font("Courier New", 15, italic: true).Align(XlHorz.Center);
+        wb5.Sheets.Add(new XlSheet { Name = "Book style" });
+        wb5.Sheets[0].WriteSheet = sw =>
+        {
+            for (int i = 0; i < 10; i++)
+            {
+                sw.StartRow();
+                sw.AddCell("foo");
+                sw.AddCell("BAR");
+                sw.AddCell(7, "baz");
+            }
+            sw.AddCell(20, 7, "end");
+        };
+        wb5.Save("defaultbook.xlsx");
+
+        var wb6 = new XlWorkbook();
+        wb6.Sheets.Add(new XlSheet { Name = "Sheet style" });
+        wb6.Sheets[0].Style!.Mod().Color("00FF00", "0000FF").Font("Arial", 14, bold: true).Align(XlHorz.Right, XlVert.Top).Border(XlBorder.Double, "00FF00");
+        wb6.Sheets[0].WriteSheet = sw =>
+        {
+            for (int i = 0; i < 10; i++)
+            {
+                sw.StartRow();
+                sw.AddCell("foo");
+                sw.AddCell("BAR");
+                sw.AddCell(7, "baz");
+            }
+            sw.AddCell(20, 7, "end");
+        };
+        wb6.Save("defaultsheet.xlsx");
     }
 
     static void ReformatFile(string inputPath, string outputPath)

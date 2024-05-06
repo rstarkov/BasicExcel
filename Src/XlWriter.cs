@@ -31,8 +31,7 @@ internal class XlWriter : IDisposable
 
     public void Write()
     {
-        initialiseStyles(_wb.Style);
-
+        initialiseStyles();
         writeSheets(); // also collects styles that need to be saved
         writeStyles();
         writeMisc();
@@ -334,34 +333,37 @@ internal class XlWriter : IDisposable
     private Dictionary<string, int> _sxBordersXml = [];
     private Dictionary<string, int> _sxXfsXml = [];
 
-    private void initialiseStyles(XlStyle wbDefaultStyle)
+    private void initialiseStyles()
     {
-        var s = wbDefaultStyle;
-        void throwErr(string name) => throw new InvalidOperationException($"{name} must not be null in the default workbook style.");
-        if (s.Format == null) throwErr(nameof(XlStyle.Format));
-        if (s.Font == null) throwErr(nameof(XlStyle.Font));
-        if (s.Size == null) throwErr(nameof(XlStyle.Size));
-        if (s.Bold == null) throwErr(nameof(XlStyle.Bold));
-        if (s.Italic == null) throwErr(nameof(XlStyle.Italic));
-        if (s.Color == null) throwErr(nameof(XlStyle.Color));
-        if (s.FillColor == null) throwErr(nameof(XlStyle.FillColor));
-        if (s.Horz == null) throwErr(nameof(XlStyle.Horz));
-        if (s.Vert == null) throwErr(nameof(XlStyle.Vert));
-        if (s.Wrap == null) throwErr(nameof(XlStyle.Wrap));
-        if (s.BrLeft == null) throwErr(nameof(XlStyle.BrLeft));
-        if (s.BrLeftColor == null) throwErr(nameof(XlStyle.BrLeftColor));
-        if (s.BrRight == null) throwErr(nameof(XlStyle.BrRight));
-        if (s.BrRightColor == null) throwErr(nameof(XlStyle.BrRightColor));
-        if (s.BrTop == null) throwErr(nameof(XlStyle.BrTop));
-        if (s.BrTopColor == null) throwErr(nameof(XlStyle.BrTopColor));
-        if (s.BrBot == null) throwErr(nameof(XlStyle.BrBot));
-        if (s.BrBotColor == null) throwErr(nameof(XlStyle.BrBotColor));
+        var s = _wb.Style;
+        void checkNotNull(object? value, string name) { if (value == null) throw new InvalidOperationException($"{name} must not be null in the default workbook style."); }
+        checkNotNull(s.Format, nameof(s.Format));
+        checkNotNull(s.Font, nameof(s.Font));
+        checkNotNull(s.Size, nameof(s.Size));
+        checkNotNull(s.Bold, nameof(s.Bold));
+        checkNotNull(s.Italic, nameof(s.Italic));
+        checkNotNull(s.Color, nameof(s.Color));
+        checkNotNull(s.FillColor, nameof(s.FillColor));
+        checkNotNull(s.Horz, nameof(s.Horz));
+        checkNotNull(s.Vert, nameof(s.Vert));
+        checkNotNull(s.Wrap, nameof(s.Wrap));
+        checkNotNull(s.BrLeft, nameof(s.BrLeft));
+        checkNotNull(s.BrLeftColor, nameof(s.BrLeftColor));
+        checkNotNull(s.BrRight, nameof(s.BrRight));
+        checkNotNull(s.BrRightColor, nameof(s.BrRightColor));
+        checkNotNull(s.BrTop, nameof(s.BrTop));
+        checkNotNull(s.BrTopColor, nameof(s.BrTopColor));
+        checkNotNull(s.BrBot, nameof(s.BrBot));
+        checkNotNull(s.BrBotColor, nameof(s.BrBotColor));
+        if (s.FillColor != "") throw new NotSupportedException("A workbook-wide default fill is not supported by Excel.");
+        if (s.BrLeft != XlBorder.None || s.BrRight != XlBorder.None || s.BrTop != XlBorder.None || s.BrBot != XlBorder.None) throw new NotSupportedException("A workbook-wide default border is not supported by Excel.");
+        if (s.BrLeftColor != "" || s.BrRightColor != "" || s.BrTopColor != "" || s.BrBotColor != "") throw new NotSupportedException("A workbook-wide default border color is not supported by Excel.");
 
         _sxFontsXml.Add(makeFontXml(s.Font!, s.Size!.Value, s.Bold!.Value, s.Italic!.Value, s.Color!), 0);
         _sxFillsXml.Add(makeFillXml(s.FillColor!), 0);
         _sxFillsXml.Add("""<fill><patternFill patternType="gray125" /></fill>""", 1); // Excel wants this fill to be present
         _sxBordersXml.Add(makeBorderXml(s.BrLeft!.Value, s.BrLeftColor!, s.BrRight!.Value, s.BrRightColor!, s.BrTop!.Value, s.BrTopColor!, s.BrBot!.Value, s.BrBotColor!), 0);
-        _sxXfsXml.Add(new XElement("xf", new XAttribute("numFmtId", 0), new XAttribute("fontId", 0), new XAttribute("fillId", 0), new XAttribute("borderId", 0), new XAttribute("xfId", 0)).ToString(SaveOptions.DisableFormatting), 0);
+        _sxXfsXml.Add(makeXfXml(0, 0, 0, 0, s.Horz!.Value, s.Vert!.Value, s.Wrap!.Value), 0);
     }
 
     private static string makeFontXml(string fontName, double fontSize, bool bold, bool italic, string color)
@@ -416,6 +418,33 @@ internal class XlWriter : IDisposable
         return sb.ToString();
     }
 
+    private static string makeXfXml(int numFmtId, int fontId, int fillId, int borderId, XlHorz horz, XlVert vert, bool wrap)
+    {
+        var xf = new XElement("xf",
+        new XAttribute("numFmtId", numFmtId),
+            new XAttribute("fontId", fontId),
+            new XAttribute("fillId", fillId),
+            new XAttribute("borderId", borderId),
+            new XAttribute("xfId", 0));
+
+        if (numFmtId != 0) xf.Add(new XAttribute("applyNumberFormat", 1));
+        if (fontId != 0) xf.Add(new XAttribute("applyFont", 1));
+        if (fillId != 0) xf.Add(new XAttribute("applyFill", 1));
+        if (borderId != 0) xf.Add(new XAttribute("applyBorder", 1));
+
+        if (horz != XlHorz.Auto || vert != XlVert.Bottom || wrap)
+        {
+            var alignment = new XElement("alignment");
+            if (horz != XlHorz.Auto) alignment.Add(new XAttribute("horizontal", horz.ToString().ToLower()));
+            if (vert != XlVert.Bottom) alignment.Add(new XAttribute("vertical", vert.ToString().ToLower()));
+            if (wrap) alignment.Add(new XAttribute("wrapText", 1));
+            xf.Add(alignment);
+            xf.Add(new XAttribute("applyAlignment", 1));
+        }
+
+        return xf.ToString(SaveOptions.DisableFormatting);
+    }
+
     private static T nn<T>(T? v) where T : struct => v ?? throw new NullReferenceException();
     private static T nn<T>(T? v) where T : class => v ?? throw new NullReferenceException();
 
@@ -435,29 +464,7 @@ internal class XlWriter : IDisposable
         var borderXml = makeBorderXml(nn(s.BrLeft), nn(s.BrLeftColor), nn(s.BrRight), nn(s.BrRightColor), nn(s.BrTop), nn(s.BrTopColor), nn(s.BrBot), nn(s.BrBotColor));
         int borderId = getOrAddXmlId(_sxBordersXml, borderXml, 0);
 
-        var xf = new XElement("xf",
-            new XAttribute("numFmtId", numFmtId),
-            new XAttribute("fontId", fontId),
-            new XAttribute("fillId", fillId),
-            new XAttribute("borderId", borderId),
-            new XAttribute("xfId", 0));
-
-        if (numFmtId != 0) xf.Add(new XAttribute("applyNumberFormat", 1));
-        if (fontId != 0) xf.Add(new XAttribute("applyFont", 1));
-        if (fillId != 0) xf.Add(new XAttribute("applyFill", 1));
-        if (borderId != 0) xf.Add(new XAttribute("applyBorder", 1));
-
-        if (nn(s.Horz) != XlHorz.Auto || nn(s.Vert) != XlVert.Bottom || nn(s.Wrap))
-        {
-            var alignment = new XElement("alignment");
-            if (nn(s.Horz) != XlHorz.Auto) alignment.Add(new XAttribute("horizontal", nn(s.Horz).ToString().ToLower()));
-            if (nn(s.Vert) != XlVert.Bottom) alignment.Add(new XAttribute("vertical", nn(s.Vert).ToString().ToLower()));
-            if (nn(s.Wrap)) alignment.Add(new XAttribute("wrapText", 1));
-            xf.Add(alignment);
-            xf.Add(new XAttribute("applyAlignment", 1));
-        }
-
-        var xfXml = xf.ToString(SaveOptions.DisableFormatting);
+        var xfXml = makeXfXml(numFmtId, fontId, fillId, borderId, nn(s.Horz), nn(s.Vert), nn(s.Wrap));
         return getOrAddXmlId(_sxXfsXml, xfXml, 0);
     }
 
