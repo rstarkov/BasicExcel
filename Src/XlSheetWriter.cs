@@ -1,4 +1,4 @@
-using System.Security;
+﻿using System.Security;
 
 namespace BasicExcel;
 
@@ -9,7 +9,7 @@ public class XlSheetWriter
     private XlSheet _sheet;
     private XlStyle _parentStyle;
     private bool _rowStarted = false; // only ever false when the sheet is blank
-    private XlStyle? _rowStyle; // full style with sheet+wb styling
+    private XlStyle _rowStyle; // full style with sheet+wb styling
 
     /// <param name="parentStyle">A merged sheet + workbook default style.</param>
     internal XlSheetWriter(XlWriter writer, StreamWriter stream, XlSheet sheet, XlStyle parentStyle)
@@ -95,7 +95,7 @@ public class XlSheetWriter
         if (type != null)
             _stream.Write($" t=\"{type}\"");
         var colStyle = _sheet.Columns.TryGetValue(col, out var c) ? c.Style : null;
-        int styleId = _xlWriter.MapStyle(XlStyle.New(style).Inherit(colStyle).Inherit(_rowStyle));
+        int styleId = _xlWriter.MapStyle(XlStyle.New(style).Inherit(colStyle).Inherit(_rowStyle)!);
         if (styleId != 0)
             _stream.Write($" s=\"{styleId}\"");
         _stream.Write("><v>");

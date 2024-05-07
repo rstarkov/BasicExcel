@@ -5,7 +5,7 @@ public class XlStyleMod
     private XlStyle style;
     public XlStyleMod(XlStyle style) => this.style = style;
 
-    public static implicit operator XlStyle(XlStyleMod mod) => mod.style;
+    public static implicit operator XlStyle?(XlStyleMod? mod) => mod?.style;
 
     public XlStyleMod Fmt(string fmt)
     {
