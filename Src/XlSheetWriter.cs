@@ -1,4 +1,4 @@
-﻿using System.Security;
+using System.Security;
 
 namespace BasicExcel;
 
@@ -30,7 +30,7 @@ public class XlSheetWriter
             _stream.WriteLine("</row>");
     }
 
-    public void StartRow(int row, XlStyle? rowStyle = null, double? height = null)
+    public void StartRow(int row, XlStyle? style = null, double? height = null)
     {
         if (_rowStarted)
         {
@@ -47,16 +47,16 @@ public class XlSheetWriter
         Col = 1;
         if (height != null)
             _stream.Write($" ht=\"{height}\" customHeight=\"1\"");
-        _rowStyle = XlStyle.New(rowStyle).Inherit(_parentStyle);
+        _rowStyle = XlStyle.New(style).Inherit(_parentStyle)!;
         int styleId = _xlWriter.MapStyle(_rowStyle);
         if (styleId != 0)
             _stream.Write($" s=\"{styleId}\" customFormat=\"1\"");
         _stream.Write(">");
     }
 
-    public void StartRow(XlStyle? rowStyle = null, double? height = null)
+    public void StartRow(XlStyle? style = null, double? height = null)
     {
-        StartRow(_rowStarted ? Row + 1 : Row, rowStyle, height);
+        StartRow(_rowStarted ? Row + 1 : Row, style, height);
     }
 
     public void AddCell(string value, XlStyle? style = null) => AddCell(Row, Col, value, style);
