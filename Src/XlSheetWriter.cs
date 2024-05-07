@@ -59,28 +59,28 @@ public class XlSheetWriter
         StartRow(_rowStarted ? Row + 1 : Row, style, height);
     }
 
-    public void AddCell(string value, XlStyle? style = null) => AddCell(Row, Col, value, style);
-    public void AddCell(int value, XlStyle? style = null) => AddCell(Row, Col, value, style);
-    public void AddCell(double value, XlStyle? style = null) => AddCell(Row, Col, value, style);
-    public void AddCell(decimal value, XlStyle? style = null) => AddCell(Row, Col, value, style);
-    public void AddCell(bool value, XlStyle? style = null) => AddCell(Row, Col, value, style);
-    public void AddCell(DateTime value, XlStyle? style = null) => AddCell(Row, Col, value, style);
+    public void AddCell(string? value, XlStyle? style = null) => AddCell(Row, Col, value, style);
+    public void AddCell(int? value, XlStyle? style = null) => AddCell(Row, Col, value, style);
+    public void AddCell(double? value, XlStyle? style = null) => AddCell(Row, Col, value, style);
+    public void AddCell(decimal? value, XlStyle? style = null) => AddCell(Row, Col, value, style);
+    public void AddCell(bool? value, XlStyle? style = null) => AddCell(Row, Col, value, style);
+    public void AddCell(DateTime? value, XlStyle? style = null) => AddCell(Row, Col, value, style);
     public void AddCell(DateOnly? value, XlStyle? style = null) => AddCell(Row, Col, value, style);
 
-    public void AddCell(int col, string value, XlStyle? style = null) => AddCell(Row, col, value, style);
-    public void AddCell(int col, int value, XlStyle? style = null) => AddCell(Row, col, value, style);
-    public void AddCell(int col, double value, XlStyle? style = null) => AddCell(Row, col, value, style);
-    public void AddCell(int col, decimal value, XlStyle? style = null) => AddCell(Row, col, value, style);
-    public void AddCell(int col, bool value, XlStyle? style = null) => AddCell(Row, col, value, style);
-    public void AddCell(int col, DateTime value, XlStyle? style = null) => AddCell(Row, col, value, style);
+    public void AddCell(int col, string? value, XlStyle? style = null) => AddCell(Row, col, value, style);
+    public void AddCell(int col, int? value, XlStyle? style = null) => AddCell(Row, col, value, style);
+    public void AddCell(int col, double? value, XlStyle? style = null) => AddCell(Row, col, value, style);
+    public void AddCell(int col, decimal? value, XlStyle? style = null) => AddCell(Row, col, value, style);
+    public void AddCell(int col, bool? value, XlStyle? style = null) => AddCell(Row, col, value, style);
+    public void AddCell(int col, DateTime? value, XlStyle? style = null) => AddCell(Row, col, value, style);
     public void AddCell(int col, DateOnly? value, XlStyle? style = null) => AddCell(Row, col, value, style);
 
-    public void AddCell(int row, int col, string value, XlStyle? style = null) { addCell(row, col, value, "str", style); }
-    public void AddCell(int row, int col, int value, XlStyle? style = null) { addCell(row, col, value.ToString(), null, style); }
-    public void AddCell(int row, int col, double value, XlStyle? style = null) { addCell(row, col, value.ToString(), null, style); }
-    public void AddCell(int row, int col, decimal value, XlStyle? style = null) { addCell(row, col, value.ToString(), null, style); }
-    public void AddCell(int row, int col, bool value, XlStyle? style = null) { addCell(row, col, value ? "1" : "0", "b", style); }
-    public void AddCell(int row, int col, DateTime value, XlStyle? style = null) { addCell(row, col, (value - new DateTime(1899, 12, 30)).TotalDays.ToString(), null, style); } // 1 day off before Feb 1900, don't care
+    public void AddCell(int row, int col, string? value, XlStyle? style = null) { addCell(row, col, value, "str", style); }
+    public void AddCell(int row, int col, int? value, XlStyle? style = null) { addCell(row, col, value?.ToString(), null, style); }
+    public void AddCell(int row, int col, double? value, XlStyle? style = null) { addCell(row, col, value?.ToString(), null, style); }
+    public void AddCell(int row, int col, decimal? value, XlStyle? style = null) { addCell(row, col, value?.ToString(), null, style); }
+    public void AddCell(int row, int col, bool? value, XlStyle? style = null) { addCell(row, col, value == null ? null : value.Value ? "1" : "0", "b", style); }
+    public void AddCell(int row, int col, DateTime? value, XlStyle? style = null) { addCell(row, col, value == null ? null : (value.Value - new DateTime(1899, 12, 30)).TotalDays.ToString(), null, style); } // 1 day off before Feb 1900, don't care
     public void AddCell(int row, int col, DateOnly? value, XlStyle? style = null) { addCell(row, col, value == null ? null : (value.Value.DayNumber - new DateOnly(1899, 12, 30).DayNumber).ToString(), null, style); }
 
     private void addCell(int row, int col, string? rawvalue, string? type, XlStyle? style)
