@@ -97,6 +97,8 @@ internal class XlWriter : IDisposable
         var fullSheetStyle = XlStyle.New(s.Style).Inherit(_wb.Style);
         if (s.Columns.Count > 0)
         {
+            if (s.Columns.Keys.Any(k => k < 1))
+                throw new InvalidOperationException("Column indices are 1-based and must therefore be greater than zero.");
             writer.WriteLine("  <cols>");
             foreach (var kvp in s.Columns.OrderBy(kvp => kvp.Key))
             {

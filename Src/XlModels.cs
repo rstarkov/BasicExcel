@@ -61,6 +61,7 @@ public class XlSheet
 {
     /// <summary>Name of the sheet. Automatically deduplicated if necessary. Defaults to "Sheet".</summary>
     public string Name { get; set; } = "Sheet";
+    /// <summary>First column is index 1. Entries are added automatically on index access.</summary>
     public AutoDictionary<int, XlColumn> Columns { get; } = new(_ => new());
     public int? FreezeRows { get; set; } = null;
     public int? FreezeCols { get; set; } = null;
