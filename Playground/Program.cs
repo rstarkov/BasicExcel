@@ -8,8 +8,8 @@ internal class Program
     static void Main(string[] args)
     {
         CreateTestXmls();
-        ReformatFile(@"empty.xlsx", @"empty.xlsx.zip");
-        ReformatFile(@"basic.xlsx", @"basic.xlsx.zip");
+        foreach (var file in Directory.EnumerateFiles(".", "*.xlsx"))
+            ReformatFile(file, file + ".zip");
     }
 
     static void CreateTestXmls()

@@ -330,6 +330,8 @@ internal class XlWriter : IDisposable
     #region Style mapping
 
     private static string[] _borderStyleStr = ["", "hair", "thin", "medium", "thick", "dotted", "dashed", "mediumDashed", "dashDot", "mediumDashDot", "dashDotDot", "mediumDashDotDot", "slantDashDot", "double"];
+    private static string[] _horzAlignStr = ["", "left", "center", "right"];
+    private static string[] _vertAlignStr = ["", "center", "top"];
 
     private Dictionary<string, int> _sxNumFmts = [];
     private Dictionary<string, int> _sxFontsXml = [];
@@ -427,29 +429,29 @@ internal class XlWriter : IDisposable
 
     private static string makeXfXml(int numFmtId, int fontId, int fillId, int borderId, XlHorz horz, XlVert vert, bool wrap)
     {
-        var xf = new XElement("xf",
-        new XAttribute("numFmtId", numFmtId),
-            new XAttribute("fontId", fontId),
-            new XAttribute("fillId", fillId),
-            new XAttribute("borderId", borderId),
-            new XAttribute("xfId", 0));
+        var xf = new StringBuilder();
+        xf.Append(
+            $"""
+            <xf numFmtId="{numFmtId}" fontId="{fontId}" fillId="{fillId}" borderId="{borderId}" xfId="0"
+            """);
 
-        if (numFmtId != 0) xf.Add(new XAttribute("applyNumberFormat", 1));
-        if (fontId != 0) xf.Add(new XAttribute("applyFont", 1));
-        if (fillId != 0) xf.Add(new XAttribute("applyFill", 1));
-        if (borderId != 0) xf.Add(new XAttribute("applyBorder", 1));
+        if (numFmtId != 0) xf.Append(" applyNumberFormat=\"1\"");
+        if (fontId != 0) xf.Append(" applyFont=\"1\"");
+        if (fillId != 0) xf.Append(" applyFill=\"1\"");
+        if (borderId != 0) xf.Append(" applyBorder=\"1\"");
 
-        if (horz != XlHorz.Auto || vert != XlVert.Bottom || wrap)
+        if (horz == XlHorz.Auto && vert == XlVert.Bottom && !wrap)
+            xf.Append(" />");
+        else
         {
-            var alignment = new XElement("alignment");
-            if (horz != XlHorz.Auto) alignment.Add(new XAttribute("horizontal", horz.ToString().ToLower()));
-            if (vert != XlVert.Bottom) alignment.Add(new XAttribute("vertical", vert.ToString().ToLower()));
-            if (wrap) alignment.Add(new XAttribute("wrapText", 1));
-            xf.Add(alignment);
-            xf.Add(new XAttribute("applyAlignment", 1));
+            xf.Append(" applyAlignment=\"1\"><alignment");
+            if (horz != XlHorz.Auto) xf.Append($" horizontal=\"{_horzAlignStr[(int)horz]}\"");
+            if (vert != XlVert.Bottom) xf.Append($" vertical=\"{_vertAlignStr[(int)vert]}\"");
+            if (wrap) xf.Append(" wrapText=\"1\"");
+            xf.Append(" /></xf>");
         }
 
-        return xf.ToString(SaveOptions.DisableFormatting);
+        return xf.ToString();
     }
 
     private static T nn<T>(T? v) where T : struct => v ?? throw new NullReferenceException();

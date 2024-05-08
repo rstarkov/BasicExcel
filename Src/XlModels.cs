@@ -139,8 +139,8 @@ public record class XlStyle
     public static XlStyleMod New(XlStyle? inherit) => new XlStyleMod(new XlStyle().Inherit(inherit));
 }
 
-public enum XlHorz { Auto = 0, Left, Center, Right } // do not rename - .ToString written to output files
-public enum XlVert { Bottom = 0, Center, Top } // do not rename - .ToString written to output files
+public enum XlHorz { Auto = 0, Left, Center, Right } // do not reorder - see XlWriter lookup array
+public enum XlVert { Bottom = 0, Center, Top } // do not reorder - see XlWriter lookup array
 public enum XlBorder { None = 0, Hair, Thin, Medium, Thick, Dot, Dash, MediumDash, DashDot, MediumDashDot, DashDotDot, MediumDashDotDot, SlantDashDot, Double } // do not reorder - see XlWriter lookup array
 
 public static class XlFmt
