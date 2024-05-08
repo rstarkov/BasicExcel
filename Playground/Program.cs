@@ -1,4 +1,5 @@
-﻿using System.IO.Compression;
+﻿using System.Diagnostics;
+using System.IO.Compression;
 using System.Xml.Linq;
 
 namespace BasicExcel.Playground;
@@ -7,9 +8,11 @@ internal class Program
 {
     static void Main(string[] args)
     {
+        //SwiftExcelLikePerfTest();
         CreateTestXmls();
-        foreach (var file in Directory.EnumerateFiles(".", "*.xlsx"))
-            ReformatFile(file, file + ".zip");
+        foreach (var file in new DirectoryInfo(".").EnumerateFiles("*.xlsx"))
+            if (file.Name != "perftest.xlsx")
+                ReformatFile(file.FullName, file.FullName + ".zip");
     }
 
     static void CreateTestXmls()
@@ -138,5 +141,24 @@ internal class Program
             var xml = XDocument.Load(os);
             xml.Save(ns, SaveOptions.None);
         }
+    }
+
+    static void SwiftExcelLikePerfTest()
+    {
+        var p = Process.GetCurrentProcess();
+        var baseline = p.PeakPagedMemorySize64;
+        var start = DateTime.UtcNow;
+        var wb = new XlWorkbook();
+        wb.Sheets.Add(new XlSheet());
+        wb.Sheets[0].WriteSheet = sw =>
+        {
+            for (var row = 1; row <= 100000; row++)
+                for (var col = 1; col <= 100; col++)
+                    sw.AddCell(row, col, $"row:{row}-col:{col}");
+        };
+        wb.Save("perftest.xlsx");
+        Console.WriteLine($"{(DateTime.UtcNow - start).TotalMilliseconds:0}ms");
+        p.Refresh();
+        Console.WriteLine($"peak paged={p.PeakPagedMemorySize64 - baseline:#,0} + baseline={baseline:#,0}");
     }
 }

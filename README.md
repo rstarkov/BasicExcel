@@ -84,7 +84,11 @@ sheet.WriteSheet = sw =>
 - add multiple sheets; specify active sheet
 - freeze columns/rows
 - created/modified metadata
-- reasonable memory usage for large sheets as sheet data is written on-the-fly
+
+### Performance
+- unstyled 100,000 rows 100 cells each: 5.5 seconds ([SwiftExcel](https://github.com/RomanPavelko/SwiftExcel) manages 3 seconds)
+- minimal RAM usage as sheet data is written to the output on-the-fly (16MB peak for the above example)
+- with styling applied, performance drops very approximately up to 4x for the heaviest styling
 
 ### Styling limitations:
 - only basic font styling: family, size, color, bold, italic
@@ -99,7 +103,6 @@ sheet.WriteSheet = sw =>
 
 ### Other limitations:
 - this is a write-only library with no support for reading Excel files
-- not particularly fast: ~100k-200k cells per second depending on CPU
 - no formulas
 - no data filters
 - no charts, no images, no embeds
