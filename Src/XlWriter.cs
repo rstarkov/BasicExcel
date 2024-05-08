@@ -63,7 +63,7 @@ internal class XlWriter : IDisposable
 
     private void writeSheet(XlSheet s, int si)
     {
-        var entry = _zip.CreateEntry($"xl/worksheets/sheet{si + 1}.xml", CompressionLevel.SmallestSize);
+        var entry = _zip.CreateEntry($"xl/worksheets/sheet{si + 1}.xml", CompressionLevel.Fastest);
         using var writer = new StreamWriter(entry.Open());
         writer.WriteLine(
             $$"""
