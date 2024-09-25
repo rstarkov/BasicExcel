@@ -98,9 +98,17 @@ public class XlSheetWriter
         int styleId = _xlWriter.MapStyle(XlStyle.New(style).Inherit(colStyle).Inherit(_rowStyle)!);
         if (styleId != 0)
             _stream.Write($" s=\"{styleId}\"");
-        _stream.Write("><v>");
-        _stream.Write(SecurityElement.Escape(rawvalue));
-        _stream.Write("</v></c>");
+        if (rawvalue == null)
+            _stream.Write("/>");
+        else
+        {
+            if (type == "str" && rawvalue != null && rawvalue.Length > 0 && char.IsWhiteSpace(rawvalue[0]))
+                _stream.Write("><v xml:space=\"preserve\">");
+            else
+                _stream.Write("><v>");
+            _stream.Write(SecurityElement.Escape(rawvalue));
+            _stream.Write("</v></c>");
+        }
         Col = col + 1;
     }
 }
