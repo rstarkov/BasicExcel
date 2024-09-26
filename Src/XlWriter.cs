@@ -330,7 +330,7 @@ internal class XlWriter : IDisposable
     #region Style mapping
 
     private static string[] _borderStyleStr = ["", "hair", "thin", "medium", "thick", "dotted", "dashed", "mediumDashed", "dashDot", "mediumDashDot", "dashDotDot", "mediumDashDotDot", "slantDashDot", "double"];
-    private static string[] _horzAlignStr = ["", "left", "center", "right"];
+    private static string[] _horzAlignStr = ["", "left", "center", "right", "centerContinuous"];
     private static string[] _vertAlignStr = ["", "center", "top"];
 
     private Dictionary<string, int> _sxNumFmts = [];

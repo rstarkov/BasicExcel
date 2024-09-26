@@ -96,7 +96,7 @@ sheet.WriteSheet = sw =>
 - solid color fills only
 - no support for themes or palette colors - RGB/ARGB only
 - no column-spanning styles
-- no cell merging or center-across-selection
+- no cell merging
 - no diagonal borders
 - whole-workbook style doesn't support fill or border (Excel limitation)
 - no conditional formatting
